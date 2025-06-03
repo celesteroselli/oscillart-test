@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Oscillart</title>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="container">
+        <div id="center-container">
+    <h1>Welcome to Oscillart</h1>
+    <canvas id="canvas">
+
+    </canvas>
+    <div id="input-form">
+        <div>
+            <label for="input">Input notes:</label>
+            <input type="text" id="input">
+        </div>
+        <div>
+            <button id="submit" onclick="handle()">Submit me why dontcha</button>
+        </div>
+        <div>
+            <label for="input">Amplitude changer:</label>
+            <input type="range" min="1" max="100" value="50" id="amp-slider">
+        </div>
+        <div>
+            <label for="color">Color picker:</label>
+            <input type="color" id="color" value="#ff0000">
+        </div>
+    </div>
+    </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
