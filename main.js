@@ -1,10 +1,12 @@
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const amp_slider = document.getElementById('amp-slider');
+const vol_slider = document.getElementById('vol-slider');
 const color_picker1 = document.getElementById('color1');
 const color_picker2 = document.getElementById('color2');
 var started = false;
 var interval = null;
+var volumeset = false;
 
 var x = 0;
 var y = 0;
@@ -41,16 +43,26 @@ gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
 function frequency(pitch) {
     freq = pitch / 10000;
     if (started) {
-        gainNode.gain.setValueAtTime(100, audioCtx.currentTime);
+        volumeset=true;
+        gainNode.gain.setValueAtTime(vol_slider.value, audioCtx.currentTime);
         oscillator.frequency.setValueAtTime(pitch, audioCtx.currentTime); // value in hertz
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + ((timepernote/1000)-0.1));
+        setTimeout(() => {
+            console.log("made volumeset false after gainvalueset")
+            volumeset=false
+        }, ((timepernote)-10));
 
         input.value = "";
     } else {
+        volumeset=true;
         oscillator.start();
-        gainNode.gain.setValueAtTime(100, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(vol_slider.value, audioCtx.currentTime);
         oscillator.frequency.setValueAtTime(pitch, audioCtx.currentTime); // value in hertz
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + ((timepernote/1000)-0.1));
+        setTimeout(() => {
+            console.log("made volumeset false after gainvalueset")
+            volumeset=false
+        }, ((timepernote)-10));
 
         input.value = "";
         started = true;
@@ -102,8 +114,13 @@ function drawWave() {
 
 function line() {
     counter++;
+    console.log(volumeset);
     console.log("drawing " + freq);
     amplitude = amp_slider.value;
+    if (volumeset) {
+        gainNode.gain.value = vol_slider.value; 
+    }
+
     y = height/2 + amplitude * Math.sin(x * ((2*Math.PI)/((1)/(freq*(0.5*length)))));
     //gradiant
     const gradient = ctx.createLinearGradient(20, 0, 220, 0);
@@ -118,6 +135,7 @@ function line() {
     if(counter > (timepernote/20)) {
         clearInterval(interval);
         console.log("I'm clearing the line");
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
     }
 }
 
