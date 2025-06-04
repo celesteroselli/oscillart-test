@@ -1,6 +1,5 @@
 const form = document.getElementById('form');
 const input = document.getElementById('input');
-const amp_slider = document.getElementById('amp-slider');
 const vol_slider = document.getElementById('vol-slider');
 const color_picker1 = document.getElementById('color1');
 const color_picker2 = document.getElementById('color2');
@@ -116,7 +115,7 @@ function line() {
     counter++;
     console.log(volumeset);
     console.log("drawing " + freq);
-    amplitude = amp_slider.value;
+    amplitude = (vol_slider.value / 80)*46;
     if (volumeset) {
         gainNode.gain.value = vol_slider.value; 
     }
@@ -129,6 +128,7 @@ function line() {
 
     ctx.strokeStyle = gradient;
     ctx.lineTo(x, y);
+    ctx.lineWidth = 8/length;
     ctx.stroke();
     x = x + 1;
 
