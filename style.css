@@ -1,6 +1,8 @@
 #canvas {
     border: 5px solid black;
     height: 500px;
+    width: 900px;
+    margin-bottom: 2em;
 }
 
 #container {
@@ -14,10 +16,6 @@
 #centercontainer {
     display: flex;
     flex-direction: column;
-}
-
-#canvas {
-    margin-bottom: 2em;
 }
 
 #input-form {

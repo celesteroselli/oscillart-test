@@ -99,9 +99,9 @@ function drawWave() {
     clearInterval(interval);
     if (reset) {
         ctx.clearRect(0, 0, width, height);
-        ctx.moveTo(0, height/2);
         x = 0;
         y = height/2;
+        ctx.moveTo(x, y);
         ctx.beginPath();
     }
 
@@ -120,7 +120,7 @@ function line() {
         gainNode.gain.value = vol_slider.value; 
     }
 
-    y = height/2 + amplitude * Math.sin(x * ((2*Math.PI)/((1)/(freq*(0.5*length)))));
+    y = height/2 + amplitude * Math.sin(x * ((2*Math.PI*freq*(0.5*length))));
     //gradiant
     const gradient = ctx.createLinearGradient(20, 0, 220, 0);
         gradient.addColorStop(0, color_picker1.value);
@@ -139,24 +139,24 @@ function line() {
     }
 }
 
-var RECORDING_ONGOING = false;
+var is_recording = false;
 var recordingToggle = document.getElementById("recording-toggle"); // The button
 
 var blob, recorder = null;
 var chunks = [];
 
 recordingToggle.addEventListener("click", function(){
-    RECORDING_ONGOING = !RECORDING_ONGOING; // Start / Stop recording
-    if(RECORDING_ONGOING){
+    is_recording = !is_recording; // Start / Stop recording
+    if(is_recording){
         recordingToggle.innerHTML = "Stop Recording";
         startRecording(); // Start the recording
     } else {
         recordingToggle.innerHTML = "Start Recording";
-        stopRecording(); // Stop screen recording
+        recorder.stop(); // Stop screen recording
     }
 });
 
-async function startRecording(){
+function startRecording(){
     const canvasStream = canvas.captureStream(30); // Frame rate of canvas
     const audioDestination = audioCtx.createMediaStreamDestination();
 
@@ -173,19 +173,14 @@ async function startRecording(){
 // Create recorder
 recorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
 
-// Handle data
-chunks  = [];
 recorder.ondataavailable = e => {
   if (e.data.size > 0) {
     chunks.push(e.data);
   }
 };
 
-recorder.onstart = () => console.log("Recorder started");
 recorder.onstop = () => {
-    console.log("Recorder stopped");
     const blob = new Blob(chunks, { type: 'video/webm' });
-    console.log("Final blob size:", blob.size);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -193,16 +188,10 @@ recorder.onstop = () => {
     a.click();
     URL.revokeObjectURL(url);
 };
-recorder.onerror = e => console.error("Recorder error", e);
-recorder.ondataavailable = e => {
-    console.log("Data available", e.data.size);
-    if (e.data.size > 0) chunks.push(e.data);
-};
 
 recorder.start();
 }
 
 function stopRecording(){
-    if (!recorder) return;
     recorder.stop();
 }
